@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="mn">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no">
+<title>⚡ Сүүл Холбох</title>
+<link rel="stylesheet" href="css/main.css">
+</head>
+<body>
+<!-- OVERLAYS -->
+<div class="toast" id="toast"></div>
+<div class="elim-overlay" id="elimOv"><div class="elim-box"><div class="elim-icon" id="elimIcon">💥</div><div class="elim-title" id="elimTitle"></div><div class="elim-sub" id="elimSub"></div></div></div>
+<div class="ban-modal-bg" id="banModal"><div class="ban-modal-box"><div class="ban-modal-title" id="banTitle">🔮 ХОРИГЛОХ ҮСЭГ</div><div class="ban-modal-sub" id="banSubText"></div><input class="ban-modal-inp" id="banInp" maxlength="2" placeholder="А" autocomplete="off"><div class="ban-modal-err" id="banErr"></div><div class="ban-modal-btns"><button class="btn btn-r" style="flex:1" id="banOkBtn">✅ ХОРИГЛОХ</button><button class="btn btn-gh" style="flex:1" id="banSkipBtn">АЛГАСАХ</button></div></div></div>
+<div class="result-bg" id="resBg"><div class="result-box" id="resBox"></div></div>
+<div class="countdown-overlay" id="cdOv"><div class="cd-num" id="cdNum">3</div><div class="cd-txt">ТОГЛООМ ЭХЛЭХ ГЭЖ БАЙНА...</div></div>
+
+<!-- ①LOGIN -->
+<div id="loginScr" class="screen">
+  <div class="login-box">
+    <div class="game-title">⚡СҮҮЛ<br>ХОЛБОХ</div>
+    <div class="game-sub">MONGOLIAN WORD GAME</div>
+    <input class="inp" id="loginInp" placeholder="Хоч нэрээ оруулах..." maxlength="16" autocomplete="off" style="margin-bottom:5px">
+    <div class="char-hint"><span id="nlen">0</span>/16 тэмдэгт (хамгийн багадаа 2)</div>
+    <button class="btn btn-y btn-full btn-lg" id="loginBtn" style="margin-top:12px">ТОГЛООМ РУУГАА ▶</button>
+  </div>
+</div>
+
+<!-- ②HOME -->
+<div id="homeScr" class="screen top hidden">
+  <div class="topnav"><div class="topnav-logo">⚡ СҮҮЛ ХОЛБОХ</div><div class="topnav-right">Сайн уу, <span id="homeU"></span>!</div></div>
+  <div class="home-wrap">
+    <div style="padding-top:14px"><div class="greeting">Сайн уу, <em id="homeG"></em>! 👋</div><div class="greeting-sub">Тоглоомын горим сонгоно уу</div></div>
+    <div class="mode-grid">
+      <div class="mode-card multi" onclick="goTo('multiScr')"><div class="mode-icon">🌐</div><div class="mode-name">MULTIPLAY</div><div class="mode-desc">Найзуудтайгаа тоглох</div></div>
+      <div class="mode-card single" onclick="goTo('singleScr')"><div class="mode-icon">🎮</div><div class="mode-name">SINGLE PLAY</div><div class="mode-desc">AI-тай дадлага хийх</div></div>
+    </div>
+    <div class="card" style="background:rgba(167,139,250,.05);border-color:rgba(167,139,250,.22)">
+      <div class="lbl" style="color:var(--a4)">📖 ТОВЧ ДҮРЭМ</div>
+      <div class="rules-text">❶ Өмнөх үгийн <b>сүүлийн үсгээр</b> шинэ үг эхлүүл<br>❷ Хориглосон үсгээр <span class="ban">ТӨГСГӨЖ БОЛОХГҮЙ</span> (эхэнд орсон бол зөв)<br>❸ Щ/Ь/Ъ → А · Й/Ы → И болно<br>❹ 10 секундэд амжаагүй бол хасагдана<br>❺ 3 бүтэн тойрог тутамд тэргүүлэгч үсэг хориглоно<br>❻ Хориглолын дараа <b>оноо тэглэгдэнэ</b></div>
+    </div>
+  </div>
+</div>
+
+<!-- ③MULTI -->
+<div id="multiScr" class="screen top hidden">
+  <div class="topnav"><button class="back-btn" onclick="goTo('homeScr')">◀</button><div class="topnav-logo">MULTIPLAY</div><div class="topnav-right"><span id="muU"></span></div></div>
+  <div class="pw">
+    <div class="lbl" style="margin-bottom:10px">ГОРИМ</div>
+    <div class="sub-grid">
+      <div class="sub-card" onclick="goTo('qpScr')"><div class="sub-icon">⚡</div><div class="sub-name">QUICK PLAY</div><div class="sub-desc">Шууд тоглох</div></div>
+      <div class="sub-card" onclick="goTo('custScr')"><div class="sub-icon">⚙️</div><div class="sub-name">CUSTOM</div><div class="sub-desc">Өрөө үүсгэх</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- ④QUICKPLAY -->
+<div id="qpScr" class="screen top hidden">
+  <div class="topnav"><button class="back-btn" onclick="goTo('multiScr')">◀</button><div class="topnav-logo">QUICK PLAY</div><div class="topnav-right"><span id="qpU"></span></div></div>
+  <div class="pw">
+    <div class="lbl" style="margin-bottom:10px">ӨРӨӨ СОНГОХ</div>
+    <div class="room-item" onclick="socketJoinQuickplay(2)"><div class="room-num">1v1</div><div class="room-info"><div class="room-title">2 Тоглогч</div><div class="room-stats"><span class="room-stat">🕐 10с</span><span class="room-stat">🔄 16 үе</span><span class="room-stat">⛔ 4 хориг</span></div></div><div style="color:var(--m)">▶</div></div>
+    <div class="room-item" onclick="socketJoinQuickplay(3)"><div class="room-num">1-3</div><div class="room-info"><div class="room-title">3 Тоглогч</div><div class="room-stats"><span class="room-stat">🕐 10с</span><span class="room-stat">🔄 22 үе</span><span class="room-stat">⛔ 6 хориг</span></div></div><div style="color:var(--m)">▶</div></div>
+    <div class="room-item" onclick="socketJoinQuickplay(4)"><div class="room-num">1-4</div><div class="room-info"><div class="room-title">4 Тоглогч</div><div class="room-stats"><span class="room-stat">🕐 10с</span><span class="room-stat">🔄 29 үе</span><span class="room-stat">⛔ 7 хориг</span></div></div><div style="color:var(--m)">▶</div></div>
+    <div class="room-item" onclick="socketJoinQuickplay(5)"><div class="room-num">1-5</div><div class="room-info"><div class="room-title">5 Тоглогч</div><div class="room-stats"><span class="room-stat">🕐 10с</span><span class="room-stat">🔄 32 үе</span><span class="room-stat">⛔ 8 хориг</span></div></div><div style="color:var(--m)">▶</div></div>
+    <div class="info-note">Бодит тоглогчдыг хайна · Олдоогүй бол AI ботуудтай тоглогдоно</div>
+  </div>
+</div>
+
+<!-- ⑤CUSTOM -->
+<div id="custScr" class="screen top hidden">
+  <div class="topnav"><button class="back-btn" onclick="goTo('multiScr')">◀</button><div class="topnav-logo">CUSTOM</div><div class="topnav-right"><span id="cuU"></span></div></div>
+  <div class="pw">
+    <div class="lbl" style="margin-bottom:10px">СОНГОЛТ</div>
+    <div class="copt" onclick="goTo('lanScr')"><div class="copt-icon">🖥️</div><div><div class="copt-name">LAN PLAY</div><div class="copt-desc">Нэг сүлжээнд 1–15 тоглогч. Өөрийн дүрмийг тохируулна.</div></div></div>
+    <div class="copt" onclick="goTo('privateScr')"><div class="copt-icon">🔒</div><div><div class="copt-name">PRIVATE ROOM</div><div class="copt-desc">UUID кодоор найзуудаа урих. Онлайн тоглоно.</div></div></div>
+    <div class="copt" onclick="goTo('joinScr')"><div class="copt-icon">🚪</div><div><div class="copt-name">JOIN ROOM</div><div class="copt-desc">Өрөөний кодоор нэгдэх.</div></div></div>
+  </div>
+</div>
+
+<!-- ⑥PRIVATE -->
+<div id="privateScr" class="screen top hidden">
+  <div class="topnav"><button class="back-btn" onclick="goTo('custScr')">◀</button><div class="topnav-logo">PRIVATE ROOM</div><div class="topnav-right"><span id="prU"></span></div></div>
+  <div class="pw">
+    <div class="card">
+      <div class="lbl">ТОХИРГОО</div>
+      <div class="setting-row"><div><div class="sr-label">Нийт үе</div><div class="sr-desc">5–99</div></div><input class="sr-input" id="prR" type="number" min="5" max="99" value="22"></div>
+      <div class="setting-row"><div><div class="sr-label">Хугацаа (сек)</div><div class="sr-desc">5–30</div></div><input class="sr-input" id="prT" type="number" min="5" max="30" value="10"></div>
+      <div class="setting-row"><div><div class="sr-label">Хориглох үсэг</div><div class="sr-desc">1–20</div></div><input class="sr-input" id="prMB" type="number" min="1" max="20" value="6"></div>
+      <div class="setting-row"><div><div class="sr-label">Хориглох завсар</div><div class="sr-desc">тойрог</div></div><input class="sr-input" id="prBI" type="number" min="2" max="10" value="3"></div>
+    </div>
+    <button class="btn btn-y btn-full btn-lg" onclick="createPrivateRoom()">🔒 ӨРӨӨ ҮҮСГЭХ</button>
+  </div>
+</div>
+
+<!-- PRIVATE WAITING -->
+<div id="privateRoomScr" class="screen top hidden">
+  <div class="topnav"><button class="back-btn" onclick="goTo('custScr')">◀</button><div class="topnav-logo">PRIVATE ROOM</div></div>
+  <div class="pw">
+    <div class="card" style="text-align:center">
+      <div class="lbl">ӨРӨӨНИЙ КОД — Найзуудтайгаа хуваалцаарай</div>
+      <div class="room-code" id="privateRoomCode">------</div>
+      <div class="room-url" id="privateRoomUrl"></div>
+      <button class="btn btn-gh btn-full" style="margin-top:10px;font-size:10px" onclick="copyRoomCode()">📋 КОД ХУУЛАХ</button>
+    </div>
+    <div class="card">
+      <div class="lbl">ТОГЛОГЧИД</div>
+      <div id="lobbyPlayers"></div>
+      <div id="hostCtrl" style="margin-top:10px"><button class="btn btn-y btn-full btn-lg" id="startBtn" disabled>🚀 ТОГЛООМ ЭХЛЭХ</button></div>
+      <div id="guestCtrl" class="hidden" style="display:flex;gap:8px;margin-top:10px"><button class="btn btn-g" style="flex:1" id="rdyBtn">✅ БЭЛЭН</button><button class="btn btn-r" style="flex:1" onclick="socketExitLobby()">🚪 ГАРАХ</button></div>
+    </div>
+    <div class="lobby-cfg" id="lobbyCfg"></div>
+  </div>
+</div>
+
+<!-- ⑦JOIN -->
+<div id="joinScr" class="screen top hidden">
+  <div class="topnav"><button class="back-btn" onclick="goTo('custScr')">◀</button><div class="topnav-logo">JOIN ROOM</div></div>
+  <div class="pw">
+    <div class="card">
+      <div class="lbl">ӨРӨӨНИЙ КОД ОРУУЛАХ</div>
+      <input class="join-inp" id="joinCode" placeholder="A3B7F2" maxlength="10" autocomplete="off">
+      <button class="btn btn-g btn-full btn-lg" onclick="joinRoomByCode()">🚪 НЭГДЭХ</button>
+    </div>
+  </div>
+</div>
+
+<!-- ⑧LAN -->
+<div id="lanScr" class="screen top hidden">
+  <div class="topnav"><button class="back-btn" onclick="goTo('custScr')">◀</button><div class="topnav-logo">LAN PLAY</div><div class="topnav-right"><span id="laU"></span></div></div>
+  <div class="pw">
+    <div class="card" style="margin-bottom:10px">
+      <div class="lbl">ӨРӨӨНИЙ ТОХИРГОО</div>
+      <div class="setting-row"><div><div class="sr-label">Тоглогчийн тоо</div><div class="sr-desc">1–15</div></div><input class="sr-input" id="lnP" type="number" min="1" max="15" value="4"></div>
+      <div class="setting-row"><div><div class="sr-label">Нийт үе</div><div class="sr-desc">5–99</div></div><input class="sr-input" id="lnR" type="number" min="5" max="99" value="22"></div>
+      <div class="setting-row"><div><div class="sr-label">Хугацаа (сек)</div><div class="sr-desc">5–30</div></div><input class="sr-input" id="lnT" type="number" min="5" max="30" value="10"></div>
+      <div class="setting-row"><div><div class="sr-label">Хориглох завсар</div><div class="sr-desc">тойрог</div></div><input class="sr-input" id="lnBI" type="number" min="2" max="10" value="3"></div>
+      <div class="setting-row"><div><div class="sr-label">Хориглох үсэг</div><div class="sr-desc">1–20</div></div><input class="sr-input" id="lnMB" type="number" min="1" max="20" value="6"></div>
+    </div>
+    <div class="card info-card" style="margin-bottom:10px">
+      <div class="info-title">💡 LAN PLAY ХЭРХЭН АЖИЛЛАДАГ</div>
+      <div class="info-text">1. <b>HOST</b> дарж өрөөнд орно · Өрөөний код гарна<br>2. Бусад тоглогчид <b>JOIN</b> дарж кодыг оруулна<br>3. Бүгд <b>READY</b> болоход HOST <b>START</b> дарна<br>✅ Socket.io бодит холболтоор ажиллана</div>
+    </div>
+    <div style="display:flex;gap:8px">
+      <button class="btn btn-y btn-full" onclick="createLanRoom()">🖥️ HOST</button>
+      <button class="btn btn-g btn-full" onclick="goTo('joinScr')">🚪 JOIN</button>
+    </div>
+  </div>
+</div>
+
+<!-- ⑨LOBBY -->
+<div id="lobbyScr" class="screen top hidden">
+  <div class="topnav"><button class="back-btn" onclick="socketExitLobby()">◀</button><div class="topnav-logo">LOBBY</div><div class="topnav-right"><span id="lobU"></span></div></div>
+  <div class="lobby-wrap">
+    <div class="lobby-hdr"><div class="lobby-title" id="lobbyName">Өрөө</div><div class="lobby-sub">Тоглогчдыг хүлээж байна...</div></div>
+    <div class="lobby-cfg" id="lobbyCfg"></div>
+    <div class="lbl">ТОГЛОГЧИД</div>
+    <div id="lobbyPlayers"></div>
+    <div id="hostCtrl" class="hidden" style="margin-top:10px"><button class="btn btn-y btn-full btn-lg" id="startBtn">🚀 ТОГЛООМ ЭХЛЭХ</button></div>
+    <div id="guestCtrl" class="hidden lobby-btn-row"><button class="btn btn-g" style="flex:1" id="rdyBtn">✅ БЭЛЭН</button><button class="btn btn-r" style="flex:1" onclick="socketExitLobby()">🚪 ГАРАХ</button></div>
+  </div>
+</div>
+
+<!-- ⑩SINGLE -->
+<div id="singleScr" class="screen top hidden">
+  <div class="topnav"><button class="back-btn" onclick="goTo('homeScr')">◀</button><div class="topnav-logo">SINGLE PLAY</div><div class="topnav-right"><span id="spU"></span></div></div>
+  <div class="pw">
+    <div class="lbl" style="margin-bottom:8px">ТҮВШИН</div>
+    <div class="diff-grid">
+      <div class="diff-opt easy"    id="d-easy"    onclick="setDiff('easy')"><div class="diff-name">EASY</div><div class="diff-info">30с · 3 хориг · 12 үе<br>🐢 AI удаан</div></div>
+      <div class="diff-opt normal sel" id="d-normal" onclick="setDiff('normal')"><div class="diff-name">NORMAL</div><div class="diff-info">20с · 4 хориг · 16 үе<br>🦊 AI дундаж</div></div>
+      <div class="diff-opt hard"    id="d-hard"    onclick="setDiff('hard')"><div class="diff-name">HARD</div><div class="diff-info">10с · 6 хориг · 22 үе<br>⚡ AI хурдан</div></div>
+      <div class="diff-opt extreme" id="d-extreme" onclick="setDiff('extreme')"><div class="diff-name">🔥 EXTREME</div><div class="diff-info">5с · 10 хориг · 50 үе<br>💀 AI маш хурдан</div></div>
+    </div>
+    <div class="card" style="margin-bottom:10px">
+      <div class="lbl">AI ДАЙСНУУД</div>
+      <div class="bot-chips" id="botChips"></div>
+      <div class="bot-controls"><button class="btn btn-gh" style="font-size:10px;padding:7px 12px" onclick="addBot()">+ БОТ НЭМЭХ</button><span class="bot-hint">Хамгийн ихдээ 4 бот</span></div>
+    </div>
+    <button class="btn btn-y btn-full btn-lg" onclick="startSingle()">▶ ТОГЛООМ ЭХЛЭХ</button>
+  </div>
+</div>
+
+<!-- ⑪GAME -->
+<div id="gameScr" class="screen top hidden">
+  <div class="topnav"><button class="back-btn" onclick="quitGame()">◀</button><div class="topnav-logo">⚡ СҮҮЛ ХОЛБОХ</div><div class="topnav-right"><span id="gU"></span></div></div>
+  <div class="game-wrap">
+    <div class="game-topbar">
+      <div class="g-box round-box"><div class="g-val" id="gRound">1</div><div class="g-lbl">ҮЕ</div></div>
+      <div class="g-box"><div class="g-val" id="gMax" style="color:var(--m);font-size:13px">16</div><div class="g-lbl">НИЙТ</div></div>
+      <div class="timer-wrap"><div class="timer-ring">
+        <svg width="46" height="46" viewBox="0 0 46 46">
+          <circle cx="23" cy="23" r="19" fill="none" stroke="var(--b)" stroke-width="4"/>
+          <circle id="timerArc" cx="23" cy="23" r="19" fill="none" stroke="var(--a3)" stroke-width="4" stroke-linecap="round" stroke-dasharray="119.4" stroke-dashoffset="0" style="transform:rotate(-90deg);transform-origin:center;transition:stroke-dashoffset 1s linear,stroke .3s"/>
+        </svg>
+        <div class="timer-num" id="gTimer">—</div>
+      </div></div>
+      <div class="g-box ban-box"><div class="g-val" id="gBans">0/4</div><div class="g-lbl">ХОРИГ</div></div>
+      <div class="g-box tour-box"><div class="g-val" id="gTour">T1</div><div class="g-lbl">ТОЙРОГ</div></div>
+    </div>
+    <div class="players-row" id="pRow"></div>
+    <div class="warn-banner" id="wBanner"></div>
+    <div class="phase-banner" id="pBanner"></div>
+    <div class="word-display">
+      <div class="lbl">СҮҮЛИЙН ҮГ</div>
+      <div class="word-chips" id="wChips"><span style="color:var(--m);font-size:10px">— Эхний үг оруулна уу —</span></div>
+      <div class="req-letter" id="reqLbl">⚡ Эхлэх үсэг: —</div>
+      <div class="conv-hint hidden" id="convH"></div>
+    </div>
+    <div class="banned-wrap">
+      <div class="lbl">ХОРИГЛОСОН ҮСГҮҮД</div>
+      <div class="banned-row"><span class="banned-cnt" id="banCnt">0</span><div class="banned-badges" id="banBadges"><span style="color:var(--m);font-size:10px">Одоохондоо байхгүй</span></div></div>
+    </div>
+    <div class="game-input-wrap">
+      <div class="game-turn-lbl" id="gtlbl">ҮГ ОРУУЛАХ</div>
+      <div class="game-input-row">
+        <input class="game-inp" id="ginp" placeholder="ҮГЭЭ БИЧ..." maxlength="20" autocomplete="off">
+        <button class="game-sbtn" id="gsbtn" onclick="submitWord()">ХЭЛЭХ ▶</button>
+      </div>
+      <div class="game-fb" id="gfb"></div>
+    </div>
+    <button class="btn btn-gh btn-full" style="font-size:10px;padding:9px" onclick="quitGame()">◀ ГАРАХ</button>
+  </div>
+</div>
+
+<!-- SCRIPTS -->
+<script src="/socket.io/socket.io.js"></script>
+<script src="js/ui.js"></script>
+<script src="js/game.js"></script>
+<script src="js/socket-client.js"></script>
+
+<script>
+window.onload = async () => {
+  try {
+    if (typeof loadDictionary === 'function') await loadDictionary();
+    if (typeof initAuth === 'function') initAuth();
+    if (typeof initSingleSetup === 'function') initSingleSetup();
+
+    const urlRoom = new URLSearchParams(window.location.search).get('room');
+    if (urlRoom) sessionStorage.setItem('pendingRoom', urlRoom);
+
+    console.log("✅ Тоглоом амжилттай ачаалагдлаа.");
+  } catch (err) {
+    console.error("❌ Ачаалахад алдаа гарлаа:", err);
+  }
+};
+</script>
+</body>
+</html>
